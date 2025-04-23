@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "40380977799",
+    "project_id": "bdmaquinaria",
+    "storage_bucket": "bdmaquinaria.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40380977799:android:d24a093370da093c1f9e22",
+        "android_client_info": {
+          "package_name": "com.rsh.app_jornet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY0MyHL33zwrYNB047Uwq4z_uEcNqu4gE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
