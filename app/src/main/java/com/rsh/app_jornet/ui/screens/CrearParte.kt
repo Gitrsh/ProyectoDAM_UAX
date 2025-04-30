@@ -62,13 +62,29 @@ fun ParteScreen(navController: NavController, vistaModelo: VistaModelo) {
             .background(Brush.verticalGradient(colors = listOf(Red1, Red2))),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = "Crear Parte de Trabajo",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 20.dp),
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
+        // Barra superior con sombra
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(),
+            color = Red1,
+            shadowElevation = 8.dp
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "PARTE DE TRABAJO",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
         // Selección de Fecha (ver clase SeleccionFecha)
         SeleccionFecha(fecha) { nuevaFecha ->
             fecha = nuevaFecha

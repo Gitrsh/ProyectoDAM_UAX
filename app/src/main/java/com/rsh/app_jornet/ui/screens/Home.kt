@@ -34,7 +34,6 @@ import com.rsh.app_jornet.utils.ExportadorCSV
 
 //PAntalla de inicio
 @RequiresApi(Build.VERSION_CODES.Q)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = viewModel()) {
     val partes = vistaModelo.listaPartes
@@ -52,11 +51,40 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(//Topbar con el logo y un icono para exportar TODOS los partes
-                title = {
+        floatingActionButton = {  //Botón flotante que nos lleva a la pantalla de creación de partes
+            FloatingActionButton(
+                onClick = { navController.navigate("PantallaParte") },
+                containerColor = Color.White
+            ) {
+                Text("+", color = Color.Black)
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+                .background(Brush.verticalGradient(colors = listOf(Red1, Red2))),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            // Barra superior con sombra y diseño tipo "caja"
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                color = Red1,
+                shadowElevation = 8.dp
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    // Logo y texto centrados
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.align(Alignment.Center),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -69,51 +97,37 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Partes de Trabajo",
+                            text = "LISTADO DE PARTES",
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        ExportadorCSV.exportarPartesCSV(context, partes)
-                    }) {
+
+                    // Botón de exportar a la derecha
+                    IconButton(
+                        onClick = { ExportadorCSV.exportarPartesCSV(context, partes) },
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_export),
                             contentDescription = "Exportar CSV",
                             tint = Color.White
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Red1)
-            )
-        },
-        floatingActionButton = {  //Botón flotante que nos lleva a la pantalla de creacion de partes
-            FloatingActionButton(
-                onClick = { navController.navigate("PantallaParte") },
-                containerColor = Color.White
-            ) {
-                Text("+", color = Color.Black)
+                }
             }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-                .background(Brush.verticalGradient(listOf(Red1, Red2)))
-        ) {
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             if (partes.isEmpty()) {
                 Text(
                     text = "No hay partes creados todavía.",
                     color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
 
-            LazyColumn {//Esto nos muestra los partes creados en una lista en fichas
+                )
+            }else{
+
+            LazyColumn{ //Esto nos muestra los partes creados en una lista en fichas
                 items(partes) { parte -> //Cada item es una ficha
                     FichaParte(
                         parte = parte,
@@ -156,6 +170,6 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                 }
             }
         }
-    }
-}
+    }}}
+
 

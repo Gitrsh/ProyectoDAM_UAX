@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.rsh.app_jornet.R
 import com.rsh.app_jornet.ui.theme.Red1
 import com.rsh.app_jornet.ui.theme.Red2
-//PAntalla de logueo. Primera pantalla de la aplicación
+//Pantalla de logueo. Primera pantalla de la aplicación
 @Composable
 fun LoginScreen(navController: NavHostController) {
     val context = LocalContext.current
@@ -58,7 +58,7 @@ fun LoginScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Appartes. Cada día contigo.",
+            text = "Appartes. Contigo día a día.",
             fontSize = 14.sp,
             color = Color.Black
         )

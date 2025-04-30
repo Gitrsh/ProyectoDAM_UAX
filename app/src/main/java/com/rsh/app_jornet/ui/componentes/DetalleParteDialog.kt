@@ -24,12 +24,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rsh.app_jornet.R
 import com.rsh.app_jornet.ui.VistaModelo
+import com.rsh.app_jornet.ui.theme.Green
+
 //Nos muestra un dialogo personalizado con todos los datos de un parte y los botones de archivar y eliminar
 @Composable
 fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss: () -> Unit) {
@@ -105,7 +108,7 @@ fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss:
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Eliminar",
-                            tint = MaterialTheme.colorScheme.error
+                            tint = Color.Red
                         )
                     }
 
@@ -118,7 +121,19 @@ fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss:
                         Icon(
                             painter = painterResource(id = R.drawable.file_move),
                             contentDescription = "Archivar",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.Blue
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            archivarOK = true
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_export),
+                            contentDescription = "Exportar",
+                            tint = Color(0xFF4CAF50)
                         )
                     }
 
