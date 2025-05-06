@@ -32,7 +32,6 @@ import com.rsh.app_jornet.ui.theme.Red1
 import com.rsh.app_jornet.ui.theme.Red2
 import com.rsh.app_jornet.utils.ExportadorCSV
 
-//PAntalla de inicio
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = viewModel()) {
@@ -56,120 +55,144 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                 onClick = { navController.navigate("PantallaParte") },
                 containerColor = Color.White
             ) {
-                Text("+", color = Color.Black)
+                Text("+", color = Color.Red)
             }
         }
     ) { paddingValues ->
-        Column(
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-                .background(Brush.verticalGradient(colors = listOf(Red1, Red2))),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(14.dp)
+                .background(Color.White) // Borde blanco
         ) {
 
-            // Barra superior con sombra y diseño tipo "caja"
-            Surface(
+            BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                color = Red1,
-                shadowElevation = 8.dp
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(Brush.verticalGradient(colors = listOf(Red1, Red2)))
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                val anchoMax = if (maxWidth > 720.dp) 700.dp else maxWidth
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Logo y texto centrados
-                    Row(
-                        modifier = Modifier.align(Alignment.Center),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+
+                    // Barra superior
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        color = Red1,
+                        shadowElevation = 8.dp
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.logoprincipal),
-                            contentDescription = "Logo",
+                        Box(
                             modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "LISTADO DE PARTES",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            // Logo y texto centrados
+                            Row(
+                                modifier = Modifier.align(Alignment.Center),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.logoprincipal),
+                                    contentDescription = "Logo",
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "LISTA DE PARTES",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                            }
+
+                            // Botón de exportar a la derecha
+                            IconButton(
+                                onClick = { ExportadorCSV.exportarPartesCSV(context, partes) },
+                                modifier = Modifier.align(Alignment.CenterEnd)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_export),
+                                    contentDescription = "Exportar CSV",
+                                    tint = Color.White
+                                )
+                            }
+                        }
                     }
 
-                    // Botón de exportar a la derecha
-                    IconButton(
-                        onClick = { ExportadorCSV.exportarPartesCSV(context, partes) },
-                        modifier = Modifier.align(Alignment.CenterEnd)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Contenido limitado en ancho
+                    Column(
+                        modifier = Modifier
+                            .widthIn(max = anchoMax)
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_export),
-                            contentDescription = "Exportar CSV",
-                            tint = Color.White
-                        )
+
+                        if (partes.isEmpty()) {
+                            Text(
+                                text = "No hay partes creados todavía.",
+                                color = Color.White
+                            )
+                        } else {
+                            LazyColumn {
+                                items(partes) { parte ->
+                                    FichaParte(
+                                        parte = parte,
+                                        onClick = { parteSeleccionado = parte },
+                                        onEliminarClick = { parteEliminar = parte },
+                                        onArchivarClick = { parteArchivar = parte }
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                }
+                            }
+                        }
+
+                        // Diálogos de confirmación de eliminar y archivar
+                        parteEliminar?.let { parte ->
+                            ConfirmDialog(
+                                title = "Eliminar parte",
+                                message = "¿Estás seguro de que quieres eliminar este parte?",
+                                onConfirm = {
+                                    vistaModelo.eliminarParte(parte, onSuccess = {}, onError = {})
+                                    parteEliminar = null
+                                },
+                                onDismiss = { parteEliminar = null }
+                            )
+                        }
+
+                        parteArchivar?.let { parte ->
+                            ConfirmDialog(
+                                title = "Archivar parte",
+                                message = "¿Deseas archivar este parte? Ya no se mostrará en la lista.",
+                                onConfirm = {
+                                    vistaModelo.archivarParte(parte, onSuccess = {}, onError = {})
+                                    parteArchivar = null
+                                },
+                                onDismiss = { parteArchivar = null }
+                            )
+                        }
+
+                        parteSeleccionado?.let { parte ->
+                            DetalleParteDialog(parte = parte, vistaModelo = vistaModelo) {
+                                parteSeleccionado = null
+                            }
+                        }
                     }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (partes.isEmpty()) {
-                Text(
-                    text = "No hay partes creados todavía.",
-                    color = Color.White,
-
-                )
-            }else{
-
-            LazyColumn{ //Esto nos muestra los partes creados en una lista en fichas
-                items(partes) { parte -> //Cada item es una ficha
-                    FichaParte(
-                        parte = parte,
-                        onClick = { parteSeleccionado = parte },
-                        onEliminarClick = { parteEliminar = parte },
-                        onArchivarClick = { parteArchivar = parte }
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-            }
-
-            // Diálogos de confirmación de eliminar y archivar
-            parteEliminar?.let { parte ->
-                ConfirmDialog(
-                    title = "Eliminar parte",
-                    message = "¿Estás seguro de que quieres eliminar este parte?",
-                    onConfirm = {
-                        vistaModelo.eliminarParte(parte, onSuccess = {}, onError = {})
-                        parteEliminar = null
-                    },
-                    onDismiss = { parteEliminar = null }
-                )
-            }
-
-            parteArchivar?.let { parte ->
-                ConfirmDialog(
-                    title = "Archivar parte",
-                    message = "¿Deseas archivar este parte? Ya no se mostrará en la lista.",
-                    onConfirm = {
-                        vistaModelo.archivarParte(parte, onSuccess = {}, onError = {})
-                        parteArchivar = null
-                    },
-                    onDismiss = { parteArchivar = null }
-                )
-            }
-
-            parteSeleccionado?.let { parte ->
-                DetalleParteDialog(parte = parte, vistaModelo = vistaModelo) {
-                    parteSeleccionado = null
                 }
             }
         }
-    }}}
+    }
+}
 
 

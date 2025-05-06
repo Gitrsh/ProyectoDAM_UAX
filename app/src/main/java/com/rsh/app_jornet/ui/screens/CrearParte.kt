@@ -46,159 +46,214 @@ fun ParteScreen(navController: NavController, vistaModelo: VistaModelo) {
     val context = LocalContext.current
 
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-            .background(Brush.verticalGradient(colors = listOf(Red1, Red2))),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(14.dp)
+            .background(Color.White)
     ) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(Brush.verticalGradient(colors = listOf(Red1, Red2))),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        // Barra superior con sombra
-        Surface(
+        BoxWithConstraints(
             modifier = Modifier
-                .fillMaxWidth(),
-            color = Red1,
-            shadowElevation = 8.dp
+                .fillMaxSize()
+                .background(Brush.verticalGradient(colors = listOf(Red1, Red2)))
         ) {
-            Box(
+            val anchoMax = if (maxWidth > 720.dp) 700.dp else maxWidth
+
+            Box(modifier = Modifier.fillMaxSize()) {
+
+
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = anchoMax)
+                        .align(Alignment.TopCenter)
+                        .padding(top = 100.dp)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+            // Selección de Fecha (ver clase SeleccionFecha)
+            SeleccionFecha(fecha) { nuevaFecha -> fecha = nuevaFecha }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Campo Nombre de la obra
+            OutlinedTextField(
+                value = obra,
+                onValueChange = { obra = it },
+                label = { Text("Nombre de la obra", color = Color.Black) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Selección de Turno
+            Text("Turno:", color = Color.White, fontWeight = FontWeight.Bold)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                listOf("Mañana", "Tarde", "Noche").forEach { opcion ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = turno == opcion, onClick = { turno = opcion })
+                        Text(opcion, color = Color.White)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Selección tipo de jornada
+            Text("Tipo de jornada:", color = Color.White, fontWeight = FontWeight.Bold)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                listOf("Laboral", "Festivo").forEach { opcion ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = tipoJornada == opcion, onClick = { tipoJornada = opcion })
+                        Text(opcion, color = Color.White)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Selección Dieta
+            Text("Dieta:", color = Color.White, fontWeight = FontWeight.Bold)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                listOf("No", "1/2", "Completa").forEach { opcion ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = dieta == opcion, onClick = { dieta = opcion })
+                        Text(opcion, color = Color.White)
+                    }
+                }
+            }
+
+            // Campo Descripción del Trabajo
+            OutlinedTextField(
+                value = descripcionTrabajo,
+                onValueChange = { descripcionTrabajo = it },
+                label = { Text("Descripción del Trabajo", color = Color.Black) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = false,
+                maxLines = 4,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Nº de horas:",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
+                    .padding(bottom = 4.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "PARTE DE TRABAJO",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineMedium
+                OutlinedTextField(
+                    value = horasTrabajadas,
+                    onValueChange = { horasTrabajadas = it.filter { c -> c.isDigit() } },
+                    label = { Text("Ordinarias", color = Color.Black) },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+                OutlinedTextField(
+                    value = horasExtras,
+                    onValueChange = { horasExtras = it.filter { c -> c.isDigit() } },
+                    label = { Text("Extras", color = Color.Black) },
+                    modifier = Modifier.weight(1f),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
                 )
             }
-        }
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(24.dp))
-        // Selección de Fecha (ver clase SeleccionFecha)
-        SeleccionFecha(fecha) { nuevaFecha ->
-            fecha = nuevaFecha
-        }
-
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Campo Nombre del Trabajo
-        OutlinedTextField(
-            value = obra,
-            onValueChange = { obra = it },
-            label = { Text("Nombre del Trabajo", color = Color.Black) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Selección de Turno
-        Text("Turno:", color = Color.White, fontWeight = FontWeight.Bold)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            listOf("Mañana", "Tarde", "Noche").forEach { opcion ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(//Ver comentarios radioButton de abajo
-                        selected = turno == opcion,
-                        onClick = { turno = opcion }
-                    )
-                    Text(opcion, color = Color.White)
+            // Botones para seleccionar máquinas y trabajadores
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = { mostrarDialogoMaq = true },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) {
+                    Text("Máquinaria", color = Color.Black)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { mostrarDialogoEmp = true },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) {
+                    Text("Operarios", color = Color.Black)
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
 
-        // Selección Laboral / Festivo con RadioButton
-        Text("Tipo de jornada:", color = Color.White, fontWeight = FontWeight.Bold)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            listOf("Laboral", "Festivo").forEach { opcion ->//recorremos la lista
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = tipoJornada == opcion,//verifica si el valor de 'dieta' coincide con esta 'opcion' para saber si esta marcado o no
-                        onClick = { tipoJornada = opcion }//actualiza 'dieta' con el valor 'opcion'
-                    )
-                    Text(opcion, color = Color.White) //asigna el texto a cada boton
-                }
+            if (mostrarDialogoMaq) {
+                DialogoSeleccion(
+                    lista = maquinas,
+                    onDismiss = { mostrarDialogoMaq = false },
+                    onSeleccion = { maquinaSeleccionada ->
+                        val index = maquinas.indexOfFirst { it.campo1 == maquinaSeleccionada.campo1 }
+                        if (index != -1) {
+                            maquinas[index] = maquinas[index].copy(seleccionado = !maquinas[index].seleccionado)
+                        }
+                    }
+                )
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
 
-        // Selección Dieta
-        Text("Dieta:", color = Color.White, fontWeight = FontWeight.Bold)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            listOf("No", "1/2", "Completa").forEach { opcion ->//Ver comentarios radioButton de arriba
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = dieta == opcion,
-                        onClick = { dieta = opcion }
-                    )
-                    Text(opcion, color = Color.White)
-                }
+            if (mostrarDialogoEmp) {
+                DialogoSeleccion(
+                    lista = empleados,
+                    onDismiss = { mostrarDialogoEmp = false },
+                    onSeleccion = { empleadoSeleccionado ->
+                        val index = empleados.indexOfFirst { it.campo1 == empleadoSeleccionado.campo1 }
+                        if (index != -1) {
+                            empleados[index] = empleados[index].copy(seleccionado = !empleados[index].seleccionado)
+                        }
+                    }
+                )
             }
-        }
 
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // Campo Descripción del Trabajo
-        OutlinedTextField(
-            value = descripcionTrabajo,
-            onValueChange = { descripcionTrabajo = it },
-            label = { Text("Descripción del Trabajo", color = Color.Black) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = false,
-            maxLines = 4,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Nº de horas:",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
             OutlinedTextField(
-                value = horasTrabajadas,
-                onValueChange = { horasTrabajadas = it.filter { c -> c.isDigit() } },
-                label = { Text("Ordinarias", color = Color.Black) },
-                modifier = Modifier.weight(1f),
-                singleLine = true,
+                value = observaciones,
+                onValueChange = { observaciones = it },
+                label = { Text("Observaciones", color = Color.Black) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = false,
+                maxLines = 4,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.Black,
                     unfocusedTextColor = Color.Black,
@@ -206,174 +261,83 @@ fun ParteScreen(navController: NavController, vistaModelo: VistaModelo) {
                     unfocusedContainerColor = Color.White
                 )
             )
-            OutlinedTextField(
-                value = horasExtras,
-                onValueChange = { horasExtras = it.filter { c -> c.isDigit() } },
-                label = { Text("Extras", color = Color.Black) },
-                modifier = Modifier.weight(1f),
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Botones para seleccionar máquinas y trabajadores
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween // Esto debe estar dentro del Row
-        ) {
-            // Botón para seleccionar máquinas
-            Button(
-                onClick = { mostrarDialogoMaq = true },
-                modifier = Modifier.weight(1f), // El weight asegura que los botones ocupen el mismo espacio
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-            ) {
-                Text("Máquinaria", color = Color.Black)
-            }
+                    Button(
+                        onClick = {
+                            val empSeleccionados = empleados.filter { it.seleccionado }
+                            val maqSeleccionadas = maquinas.filter { it.seleccionado }
 
-            Spacer(modifier = Modifier.width(8.dp)) // Espacio entre los botones
+                            val mensajeError = validarCamposParteTrabajo(
+                                fecha, obra, descripcionTrabajo, horasTrabajadas,
+                                turno, tipoJornada, dieta, empSeleccionados
+                            )
 
-            // Botón para seleccionar trabajadores
-            Button(
-                onClick = { mostrarDialogoEmp = true },
-                modifier = Modifier.weight(1f), // El weight asegura que los botones ocupen el mismo espacio
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-            ) {
-                Text("Operarios", color = Color.Black)
-            }
-        }
-
-        // Dialog para seleccionar máquinas
-        //En conjunto este bloque si tenemos una lista de maquinas y el usuario hace click en una maquina
-        //crea una copia de ella cambiando el valor del campo llamado 'seleccionado'
-        //Usamos una copia 'copy()' porque 'maquinas' es una llista de objetos inmutable no podemos cambiar sus valores de forma directa
-        if (mostrarDialogoMaq) {
-            DialogoSeleccion(
-                lista = maquinas,
-                onDismiss = { mostrarDialogoMaq = false },
-                onSeleccion = { maquinaSeleccionada ->
-                    val index = maquinas.indexOfFirst { it.campo1 == maquinaSeleccionada.campo1 }
-                    if (index != -1) {
-                        //
-                        maquinas[index] = // Aquí hacemos como una banderita. con el operador ! cambiamos si seleccionado era true ahora false
-                            maquinas[index].copy(seleccionado = !maquinas[index].seleccionado)
-                        //copy nos permite copiar un obj. cambiando solo los valores q queramos 'seleccionado' en este caso
+                            if (mensajeError != null) {
+                                Toast.makeText(navController.context, mensajeError, Toast.LENGTH_SHORT).show()
+                            } else {
+                                val parte = ParteTrabajo(
+                                    fecha = fecha,
+                                    obra = obra,
+                                    maquinas = maqSeleccionadas.map { maq ->
+                                        mapOf(
+                                            "matricula" to maq.campo1,
+                                            "modelo" to maq.campo2,
+                                            "tipo" to maq.campo3,
+                                            "marca" to maq.campo4
+                                        )
+                                    },
+                                    trabajosRealizados = descripcionTrabajo,
+                                    turno = turno,
+                                    tipoJornada = tipoJornada,
+                                    observaciones = observaciones,
+                                    empleados = empSeleccionados.map { emp ->
+                                        mapOf(
+                                            "id" to emp.campo1,
+                                            "nombre" to emp.campo2,
+                                            "apellidos" to emp.campo3,
+                                            "categoria" to emp.campo4
+                                        )
+                                    },
+                                    horasTrabajadas = horasTrabajadas.toIntOrNull() ?: 0,
+                                    dieta = dieta
+                                )
+                                vistaModelo.generarParte(parte, onError = { error ->
+                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                })
+                                Toast.makeText(navController.context, "Parte de Trabajo Creado", Toast.LENGTH_SHORT).show()
+                                navController.popBackStack()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    ) {
+                        Text("Crear Parte de Trabajo", color = Color.Black)
                     }
                 }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Dialog para seleccionar trabajadore
-        //ver comentarios bloque mostrarDialogMaq
-        if (mostrarDialogoEmp) {
-            DialogoSeleccion(
-                lista = empleados,
-                onDismiss = { mostrarDialogoEmp = false },
-                onSeleccion = { empleadoSeleccionado ->
-                    val index = empleados.indexOfFirst { it.campo1 == empleadoSeleccionado.campo1 }
-                    if (index != -1) {
-                        empleados[index] =
-                            empleados[index].copy(seleccionado = !empleados[index].seleccionado)
+               //BArra superior
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    color = Red1,
+                    shadowElevation = 8.dp
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "PARTE DIARIO",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.headlineMedium
+                        )
                     }
                 }
-            )
+            }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Campo Observaciones
-        OutlinedTextField(
-            value = observaciones,
-            onValueChange = { observaciones = it },
-            label = { Text("Observaciones", color = Color.Black) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = false,
-            maxLines = 4,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Botón para guardar el parte de trabajo
-        Button(
-            onClick = {
-                val empSeleccionados = empleados.filter { it.seleccionado }
-                val maqSeleccionadas = maquinas.filter { it.seleccionado }
-
-                val mensajeError = validarCamposParteTrabajo(
-                    fecha,
-                    obra,
-                    descripcionTrabajo,
-                    horasTrabajadas,
-                    turno,
-                    tipoJornada,
-                    dieta,
-                    empSeleccionados
-                )
-
-                if (mensajeError != null) {
-                    Toast.makeText(
-                        navController.context,
-                        mensajeError,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    // Creamos el objeto ParteTrabajo
-                    val parte = ParteTrabajo(
-                        fecha = fecha,
-                        obra = obra,
-                        maquinas = maqSeleccionadas.map { maq->
-                            mapOf(
-                                "matricula" to maq.campo1,
-                                "modelo" to maq.campo2,
-                                "tipo" to maq.campo3,
-                                "marca" to maq.campo4
-                            )
-                        },
-                        trabajosRealizados = descripcionTrabajo,
-                        turno = turno,
-                        tipoJornada = tipoJornada,
-                        observaciones = observaciones,
-                        empleados = empSeleccionados.map { emp ->
-                            mapOf(
-                                "id" to emp.campo1,
-                                "nombre" to emp.campo2,
-                                "apellidos" to emp.campo3,
-                                "categoria" to emp.campo4
-                            )
-                        },
-                        horasTrabajadas = horasTrabajadas.toIntOrNull() ?: 0,
-                        dieta = dieta
-                    )
-
-
-                    // Llamamos a vistaModelo para guardar el parte
-                    vistaModelo.generarParte(parte, onError = { error ->
-                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                    })
-
-                    // Mensaje OK parte creado
-                    Toast.makeText(
-                        navController.context,
-                        "Parte de Trabajo Creado",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    navController.popBackStack()  // Regresamos a la pantalla anterior
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-        ) {
-            Text("Crear Parte de Trabajo", color = Color.Black)
-        }}}}
+    }
+}
