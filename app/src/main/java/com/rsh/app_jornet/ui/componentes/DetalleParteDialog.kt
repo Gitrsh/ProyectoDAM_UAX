@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.rsh.app_jornet.R
 import com.rsh.app_jornet.ui.VistaModelo
-import com.rsh.app_jornet.ui.theme.Green
 
 //Nos muestra un dialogo personalizado con todos los datos de un parte y los botones de archivar y eliminar
 @Composable

@@ -48,7 +48,15 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+            "META-INF/LICENSE.md",
+            "META-INF/LICENSE-notice.md",
+            "META-INF/NOTICE.md",
+            "META-INF/DEPENDENCIES",
+            "META-INF/LICENSE",
+            "META-INF/NOTICE"
+            )
         }
     }
 }
@@ -75,6 +83,7 @@ dependencies {
     implementation(libs.compose.material)
     implementation("com.itextpdf:itext7-core:7.2.5")
 
+
     implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -83,6 +92,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.mockk.android)
+    testImplementation(libs.mockk)
+
 
 
 }

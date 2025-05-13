@@ -19,6 +19,9 @@ navigationComposeVersion = "2.8.9"
 firebaseFirestoreKtx = "25.1.3"
 firebaseStorageKtx = "21.0.1"
 itext7 = "7.2.5"
+mockk-android = "1.13.5"
+mockk = "1.13.5"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +49,9 @@ firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-fires
 compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 itext7-core = { module = "com.itextpdf:itext7-core", version.ref = "itext7" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk-android" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

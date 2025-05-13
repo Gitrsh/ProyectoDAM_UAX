@@ -102,7 +102,9 @@ fun ParteScreen(navController: NavController, vistaModelo: VistaModelo) {
             ) {
                 listOf("Mañana", "Tarde", "Noche").forEach { opcion ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = turno == opcion, onClick = { turno = opcion })
+                        RadioButton(selected = turno == opcion,
+                            onClick = { turno = opcion },
+                            colors = RadioButtonDefaults.colors(selectedColor = Color.Blue))
                         Text(opcion, color = Color.White)
                     }
                 }
@@ -117,7 +119,9 @@ fun ParteScreen(navController: NavController, vistaModelo: VistaModelo) {
             ) {
                 listOf("Laboral", "Festivo").forEach { opcion ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = tipoJornada == opcion, onClick = { tipoJornada = opcion })
+                        RadioButton(selected = tipoJornada == opcion,
+                            onClick = { tipoJornada = opcion },
+                            colors = RadioButtonDefaults.colors(selectedColor = Color.Blue))
                         Text(opcion, color = Color.White)
                     }
                 }
@@ -132,7 +136,9 @@ fun ParteScreen(navController: NavController, vistaModelo: VistaModelo) {
             ) {
                 listOf("No", "1/2", "Completa").forEach { opcion ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(selected = dieta == opcion, onClick = { dieta = opcion })
+                        RadioButton(selected = dieta == opcion,
+                            onClick = { dieta = opcion },
+                            colors = RadioButtonDefaults.colors(selectedColor = Color.Blue))
                         Text(opcion, color = Color.White)
                     }
                 }

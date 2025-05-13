@@ -2,4 +2,5 @@
 <resources>
 
     <style name="Theme.App_Jornet" parent="android:Theme.Material.Light.NoActionBar" />
+
 </resources>

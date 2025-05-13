@@ -10,7 +10,7 @@ import com.rsh.app_jornet.data.model.SeleccionItem
 
 //MIRAR CORRUTINAS PARA MAS ADELANTE
 
-//Esta clase conecta la logica de negocio con la ui es la encargada de intereactuar con Firebase
+//Esta clase conecta la logica con la ui es la encargada de intereactuar con Firebase
 // (usa la clase RepositorioPartes como intermediario )
 class VistaModelo : ViewModel() {
 
@@ -99,7 +99,7 @@ class VistaModelo : ViewModel() {
                 listaPartes.remove(parte)
                 onSuccess()
             },
-            onFailure = { exception ->
+            onError = { exception ->
                 onError(exception.message ?: "Error al archivar parte")
             }
         )

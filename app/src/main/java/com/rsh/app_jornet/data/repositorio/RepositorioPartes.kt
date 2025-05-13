@@ -9,7 +9,7 @@ import com.rsh.app_jornet.data.repositorio.FirestoreService
 //Creamos un repositorio para que actue como intermediario entre Firestore y el ViewModel
 //Encapsulaos la lógica de acceso a los datos para que nuestra clase VistaModelo
 // no tenga que preocuparse en como se accede a los datos
-class RepositorioPartes {
+class RepositorioPartes() {
 
     private val db = FirestoreService.db
 
@@ -79,10 +79,10 @@ class RepositorioPartes {
             .addOnFailureListener { onFailure(it) }
     }
     //Con esto actualizamos en Firestore un parte a 'archivado' 
-    fun archivarParteFB(parteId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    fun archivarParteFB(parteId: String, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
         db.collection("partes").document(parteId)
             .update("archivado", true)
             .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onFailure(it) }
+            .addOnFailureListener { onError(it) }
     }
 }

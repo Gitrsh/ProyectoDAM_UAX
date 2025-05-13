@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,7 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
         floatingActionButton = {  //Botón flotante que nos lleva a la pantalla de creación de partes
             FloatingActionButton(
                 onClick = { navController.navigate("PantallaParte") },
+                modifier = Modifier.testTag("botonCrearParte"),//Esta linea es solo para las pruebas instrumentales
                 containerColor = Color.White
             ) {
                 Text("+", color = Color.Red)
