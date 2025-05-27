@@ -32,6 +32,7 @@ import com.rsh.app_jornet.ui.componentes.FichaParte
 import com.rsh.app_jornet.ui.theme.Red1
 import com.rsh.app_jornet.ui.theme.Red2
 import com.rsh.app_jornet.utils.ExportadorCSV
+import com.rsh.app_jornet.utils.normalizar
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -43,12 +44,54 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
 
     val context = LocalContext.current
 
+    var filtro by remember { mutableStateOf("") }
+    var ordenFechaDesc by remember { mutableStateOf(true) } // Si es true, muestra primero los descendentes
+
     //Llamamos a ViewModel para traernos los parte del usuario que tiene iniciada la sesión
     LaunchedEffect(Unit) {
         vistaModelo.cargarPartesDelUsuario { error ->
             Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
         }
     }
+
+    //  Filtro por cadena de caracteres
+    val partesFiltrados = partes.filter { parte ->
+        if (filtro.isBlank()) {
+            true // Si el campo de filtrado está vacío, muestra todos
+        } else {
+            val consulta = filtro.normalizar()
+
+            // En esta variable almacenamos los campos en los que actuará el filtro
+            val camposAfiltrar = listOf(
+                parte.obra,
+                parte.fecha,
+                parte.observaciones,
+                parte.trabajosRealizados,
+                parte.turno,
+                parte.tipoJornada,
+                parte.dieta
+            ).joinToString(" ").normalizar()
+
+            // En esta variable metemos todos los campos de empleado para "simular" que es un campo único por el que podamos filtra
+            val filasEmpleado = parte.empleados.joinToString(" ") { emp ->
+                "${emp["nombre"] ?: ""} ${emp["apellidos"] ?: ""} ${emp["categoria"] ?: ""}"
+            }.normalizar()
+
+            // metemos todos los campos de maquinas para "simular" que es un campo único ppor el que podamos filtrar
+            val filasMaquina = parte.maquinas.joinToString(" ") { maq ->
+                "${maq["matricula"] ?: ""} ${maq["tipo"] ?: ""} ${maq["marca"] ?: ""} ${maq["modelo"] ?: ""}"
+            }.normalizar()
+
+            // Busca la cadena de caracteres del filtro de búsqueda en los campos que hemos marcado antes
+            camposAfiltrar.contains(consulta) ||
+                    filasEmpleado.contains(consulta) ||
+                    filasMaquina.contains(consulta)
+        }
+    }
+
+    // Ordenar por fecha según la selección del usuario
+    val partesFiltradosOrdenados = partesFiltrados.sortedBy { it.fecha }
+        .let { if (ordenFechaDesc) it.reversed() else it }
 
     Scaffold(
         floatingActionButton = {  //Botón flotante que nos lleva a la pantalla de creación de partes
@@ -113,25 +156,118 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                                     text = "LISTA DE PARTES",
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.headlineMedium
-                                )
-                            }
-
-                            // Botón de exportar a la derecha
-                            IconButton(
-                                onClick = { ExportadorCSV.exportarPartesCSV(context, partes) },
-                                modifier = Modifier.align(Alignment.CenterEnd)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_export),
-                                    contentDescription = "Exportar CSV",
-                                    tint = Color.White
+                                    style = MaterialTheme.typography.headlineSmall
                                 )
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    // Filtro
+                    Column(
+                        modifier = Modifier
+                            .widthIn(max = anchoMax)
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Búsqueda filtrada de los campos
+                        TextField(
+                            value = filtro,
+                            onValueChange = { filtro = it },
+                            label = { Text("Buscar en cualquier campo", color = Color.Black) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Barra con botón de exportar y ordenar
+                    Row(
+                        modifier = Modifier
+                            .widthIn(max = anchoMax)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .height(56.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        // Botón de exportar
+                        Button(
+                            onClick = { ExportadorCSV.exportarPartesCSV(context, partesFiltradosOrdenados) },
+                            enabled = partesFiltradosOrdenados.isNotEmpty(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Red1,
+                                contentColor = Color.White,
+                                disabledContainerColor = Color.LightGray,
+                                disabledContentColor = Color.White
+                            ),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_export),
+                                contentDescription = "Exportar partes filtrados",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Exportar",
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        // Botón de ordenar por fecha
+                        var expanded by remember { mutableStateOf(false) }
+                        Button(
+                            onClick = { expanded = true },
+                            enabled = partesFiltradosOrdenados.isNotEmpty(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Red1,
+                                contentColor = Color.White,
+                                disabledContainerColor = Color.LightGray,
+                                disabledContentColor = Color.White
+                            ),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Text(
+                                text = "Ordenar por",
+                                color = Color.White,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Más recientes") },
+                                onClick = {
+                                    ordenFechaDesc = true
+                                    expanded = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Más antiguos") },
+                                onClick = {
+                                    ordenFechaDesc = false
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Contenido limitado en ancho
                     Column(
@@ -141,14 +277,14 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        if (partes.isEmpty()) {
+                        if (partesFiltradosOrdenados.isEmpty()) {
                             Text(
-                                text = "No hay partes creados todavía.",
+                                text = "No hay partes que coincidan con la búsqueda.",
                                 color = Color.White
                             )
                         } else {
                             LazyColumn {
-                                items(partes) { parte ->
+                                items(partesFiltradosOrdenados) { parte ->
                                     FichaParte(
                                         parte = parte,
                                         onClick = { parteSeleccionado = parte },
@@ -196,5 +332,3 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
         }
     }
 }
-
-
