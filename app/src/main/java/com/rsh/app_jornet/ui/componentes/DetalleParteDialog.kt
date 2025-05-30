@@ -1,6 +1,8 @@
 package com.rsh.app_jornet.ui.componentes
 
 import ParteTrabajo
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,19 +27,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import com.rsh.app_jornet.R
 import com.rsh.app_jornet.ui.VistaModelo
+import com.rsh.app_jornet.utils.ExportadorCSV
 
 //Nos muestra un dialogo personalizado con todos los datos de un parte y los botones de archivar y eliminar
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss: () -> Unit) {
+fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss: () -> Unit, navController: NavHostController) {
     var eliminarOK by remember { mutableStateOf(false) }//Son variables "reactivas" que usamos como tipo banderas
     var archivarOK by remember { mutableStateOf(false) }//si su estado cambia de true a false, en este caso mostrarian un dialogo
     //ademas con el remember evitamos que la variables se reinicie cada vez que la pantalla se "redibuja"
+
+    val context = LocalContext.current
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
@@ -124,9 +132,24 @@ fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss:
                         )
                     }
 
+                    // Icono editar
                     IconButton(
                         onClick = {
-                            archivarOK = true
+                            vistaModelo.modificarParte(parte)
+                            navController.navigate("PantallaParte")
+                            onDismiss()
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_edit),
+                            contentDescription = "Editar",
+                            tint = Color(0xFFFFA000)
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            ExportadorCSV.exportarPartesCSV(context, listOf(parte))
                         }
                     ) {
                         Icon(
@@ -160,7 +183,7 @@ fun DetalleParteDialog(parte: ParteTrabajo, vistaModelo: VistaModelo, onDismiss:
         )
     }
 
-// La confirmación de archivar
+// Confirmación de archivar
     if (archivarOK) {
         ConfirmDialog(
             title = "Archivar parte",

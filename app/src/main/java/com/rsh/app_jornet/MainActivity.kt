@@ -9,30 +9,25 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.rsh.app_jornet.ui.VistaModelo
 import com.rsh.app_jornet.ui.theme.App_JornetTheme
 
 /*Con esta clase lanzamos la UI. Es el punto de entrada
-Controlamos la sesión del usuario en Firebase
+inicializa la navegacion y el estado global
 
 */
 @RequiresApi(Build.VERSION_CODES.Q)
 class MainActivity : ComponentActivity() {
 
-    private val vistaModelo: VistaModelo by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            val navHostController = rememberNavController()//Inicializamos el navController
-
-            App_JornetTheme {//Con esto aplicamos el tema visual predefinido. VER PARA MODIFICAR MAS ADELANTE
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    Navigation(navHostController, vistaModelo)
-                }
-            }
+            val navController = rememberNavController()
+            val vistaModelo: VistaModelo = viewModel()
+            Navigation(navController, vistaModelo)
         }
     }
 }

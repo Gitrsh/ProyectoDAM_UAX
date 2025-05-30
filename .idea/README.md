@@ -34,8 +34,6 @@ Como servicio backend.
 + **Firebase Authentication:** Para gestionar el inicio de sesión o el registro de usuarios.
 + **Firestore:** Base de datos en la nube para guardar partes, maquinas y empleados.
 
-## Capturas de pantalla
-
 ## Requisitos.
 + AndroidStudio instalado.
 + Kotlin **2.0.0**

@@ -63,7 +63,7 @@ class RepositorioPartes() {
         db.collection("partes")
             .whereEqualTo("uid", uid)//Para recuperar solo los partes creados por un usuario especifico
             .whereEqualTo("archivado", false)//Recupera solo los partes NO archivados
-            //.orderBy("fecha", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            //.orderBy("fecha", com.google.firebase.firestore.Query.Direction.DESCENDING)//Salen ordenados por fecha en descendente. Da problemas con el indice. VER
             .get()
             .addOnSuccessListener { result ->
                 val partes = result.map { it.toObject(ParteTrabajo::class.java) }
@@ -84,5 +84,13 @@ class RepositorioPartes() {
             .update("archivado", true)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onError(it) }
+    }
+
+    // Para editar un parte por su ID y que se actualice en Firestore
+    fun actualizarParteFB(parte: ParteTrabajo, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection("partes").document(parte.id)
+            .set(parte)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
     }
 }

@@ -16,7 +16,6 @@ import com.rsh.app_jornet.ui.screens.SignScreen
 Esta pantalla es el centro de navegación. Define las rutas con la pantalla correspondiente y pasamos las dependencias
 como auth y vistaModelo a las pantallas que lo necesiten
  */
-
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun Navigation(navHostController: NavHostController, vistaModelo: VistaModelo) {
@@ -24,7 +23,7 @@ fun Navigation(navHostController: NavHostController, vistaModelo: VistaModelo) {
     NavHost(navController = navHostController, startDestination = "Login") {
         composable("Login") { LoginScreen(navHostController) }
         composable("Sign") { SignScreen(navHostController) }
-        composable("Home") { HomeScreen(navHostController) }
+        composable("Home") { HomeScreen(navHostController, vistaModelo) }
         composable("PantallaParte") { ParteScreen(navHostController, vistaModelo) }
     }
 }

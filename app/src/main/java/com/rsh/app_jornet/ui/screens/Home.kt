@@ -36,7 +36,7 @@ import com.rsh.app_jornet.utils.normalizar
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = viewModel()) {
+fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo) {
     val partes = vistaModelo.listaPartes
     var parteSeleccionado by remember { mutableStateOf<ParteTrabajo?>(null) }
     var parteEliminar by remember { mutableStateOf<ParteTrabajo?>(null) }
@@ -164,23 +164,16 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Filtro
-                    Column(
-                        modifier = Modifier
-                            .widthIn(max = anchoMax)
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Búsqueda filtrada de los campos
+
+                        // CAmpo de filtro de busqueda de partes
                         TextField(
                             value = filtro,
                             onValueChange = { filtro = it },
                             label = { Text("Buscar en cualquier campo", color = Color.Black) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                                .padding(horizontal = 16.dp)
                         )
-                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -216,7 +209,7 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Exportar",
+                                text = "Exportar todo",
                                 color = Color.White,
                                 fontWeight = FontWeight.Medium
                             )
@@ -322,13 +315,16 @@ fun HomeScreen(navController: NavHostController, vistaModelo: VistaModelo = view
                         }
 
                         parteSeleccionado?.let { parte ->
-                            DetalleParteDialog(parte = parte, vistaModelo = vistaModelo) {
-                                parteSeleccionado = null
-                            }
+                            DetalleParteDialog(
+                                parte = parte,
+                                vistaModelo = vistaModelo,
+                                onDismiss = { parteSeleccionado = null },
+                                navController = navController
+                            )
+                        }
                         }
                     }
                 }
             }
         }
     }
-}
